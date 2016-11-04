@@ -1,39 +1,49 @@
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.Scanner;
 
 public class main {
 
 	public static void main(String[] args) {
-		Chore firstChore = new Chore("Jim", "Clean Litter Box", 5);
-		JLabel myLabel = new JLabel();
-		JPanel myPanel = new JPanel();
-		
-		myPanel.setBounds(0, 0, 500, 500);
-		
-		myLabel.setText("House Keeper");
-		myPanel.add(myLabel);
-		myPanel.setPreferredSize(new Dimension(500,500));
-		myPanel.setVisible(true);
-		//1. Create the frame.
-		JFrame frame = new JFrame("House Keeper");
-		//2. Optional: What happens when the frame closes?
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		boolean run = true;
+		Scanner scanner = new Scanner(System.in);
+		Chore[] mychore = new Chore[10];
+		for (int cc = 0; cc < mychore.length; cc++)
+		{
+			mychore[cc] = new Chore();
+		}
+		int currentChore = 0;
+		while (run)
+		{
+			
+			System.out.println(Menu.MainMenu);
+			String name = scanner.next();
 
-		//3. Create components and put them in the frame.
-		//...create emptyLabel...
-		frame.getContentPane().add(myPanel);
+			switch (name)
+			{
+			case "1":
+				for (int ii = 0; ii <= 8; ii++)
+				{
+					System.out.println(Menu.addChore(ii));
+					mychore[currentChore].updateChore(ii , new Scanner(System.in).nextLine());
 
-		//4. Size the frame.
-		frame.pack();
+				}
+				currentChore++;
+				break;
 
-		//5. Show it.
-		frame.setVisible(true);
-		System.out.println("Created a chore that is assigned to "+ firstChore.getAssignedUser() + " and it was to " + firstChore.getDescription() + " and it is estimated to take " + firstChore.getDuration() + " minutes");
 
+			case "2":
+				Chore.printChores(mychore);
+				break;
+			case "q":
+			case "exit":
+				run = false;
+				break;
+			default:
+				System.out.println("Invalid Option");
+				break;
+
+			}
+
+		}
 	}
 
 }
