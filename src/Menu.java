@@ -1,6 +1,7 @@
 
 public class Menu {
-	static String MainMenu = "HouseKeeper\n Enter an option below\n 1: Add Chore\n 2: View Chores";
+	static String MainMenu = "HouseKeeper\n Enter an option below\n 1. Login\n 2. Create Account";
+	static String MainMenu2 = "Enter an option below\n 1: Add Chore\n 2: View Chores";
 	
 	static String addChore(int line)
 	{
