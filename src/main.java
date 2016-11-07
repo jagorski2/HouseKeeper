@@ -10,6 +10,7 @@ public class main {
 		boolean run = true;
 		boolean notLoggedIn = true;
 		boolean houseSelected = false;
+		String selectedHouse = "";
 		int currentChore = 0;
 	    String loggedInUser = "";
 		Scanner scanner = new Scanner(System.in);
@@ -78,10 +79,27 @@ public class main {
 			while (houseSelected == false) {
 				System.out.println(Menu.MainMenu2);
 				String houseName = "";
+				String houseIndex = "";
 				input = scanner.next();
+				String[] houses;
 
 				switch (input) {
 				case "1":
+					try {
+						houses = myDB.getHouses("123123");
+						for (int ii = 0; ii < houses.length; ii++)
+						{
+							System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
+						}
+						houseIndex = scanner.next();
+						selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
+						System.out.println("You selected house: " + selectedHouse);
+						houseSelected = true;
+						
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					break;
 				case "2":
 					System.out.println("Enter House Name");
@@ -106,7 +124,7 @@ public class main {
 				}
 			}
 
-			System.out.println(Menu.MainMenu2);
+			System.out.println(Menu.MainMenu3);
 			input = scanner.next();
 
 			switch (input) {
@@ -114,6 +132,7 @@ public class main {
 				for (int ii = 0; ii <= 8; ii++) {
 					System.out.println(Menu.addChore(ii));
 					mychore[currentChore].updateChore(ii, new Scanner(System.in).nextLine());
+					
 
 				}
 				currentChore++;

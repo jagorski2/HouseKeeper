@@ -33,6 +33,31 @@ public class Database {
 		conn.close();
 
 	}
+	
+	public String[] getHouses(String user) throws SQLException {
+		ResultSet resret;
+		String[] houses;
+		int count = 0;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		resret = stmt.executeQuery("SELECT count(*) AS count FROM `"+user+"_HOUSES");
+		resret.first();
+		houses = new String[Integer.parseInt(resret.getString("count"))];
+		resret = stmt.executeQuery("SELECT * FROM `"+user+"_HOUSES");
+
+
+		while (resret.next())
+		{	
+			houses[count++] = resret.getString("myHouses");
+		}
+		
+		
+		resret.close();
+		stmt.close();
+		conn.close();
+		return houses;
+
+	}
 
 	public boolean addUser(String uname, String pass) throws SQLException {
 		boolean returnValue;
@@ -90,9 +115,10 @@ public class Database {
 		conn = (Connection) dataSource.getConnection();
 		stmt = (Statement) conn.createStatement();
 		resret = stmt.executeQuery(q);
-		resret.next();
+		if(resret.next()) {
 		ret[0] = resret.getString("salt");
 		ret[1] = resret.getString("pass");
+		}
 		resret.close();
 		stmt.close();
 		conn.close();
