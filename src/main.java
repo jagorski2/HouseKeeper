@@ -1,18 +1,24 @@
+import java.util.Date;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 public class main {
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, NoSuchAlgorithmException {
 		
-		Database myDB = new Database("jim", "housekeeper", "192.168.1.11");
-		myDB.queryDB("123");
+		Database myDB = new Database("jim", "housekeeper", "127.0.0.1");
+
 		boolean run = true;
 		Scanner scanner = new Scanner(System.in);
 		Chore[] mychore = new Chore[10];
 		String username = "";
 		String password = "";
+		String vpassword = "";
 		String name;
 		for (int cc = 0; cc < mychore.length; cc++)
 		{
@@ -34,8 +40,31 @@ public class main {
 					username = scanner.next();
 					System.out.println("Enter password");
 					password = scanner.next();
-					System.out.println("Logging in with username "+ username+ " and password " +password );
+					System.out.println(password);
+					if (Crypto.authUser(password.trim(), myDB.getPassAndSalt(username)[0], myDB.getPassAndSalt(username)[1])) {
+						System.out.println("Logging in with username "+ username+ " and password " +password );
+					}
+					else
+					{
+						System.out.println("Username = "+ username + " Salt = "+myDB.getPassAndSalt(username)[0] + " EncryptedPW = "+ myDB.getPassAndSalt(username)[1]);
+					}
+					
+					
 					notLoggedIn = false;
+					break;
+				case "2":
+				System.out.println("Enter desired user name");
+				username = scanner.next();
+				System.out.println("Enter password");
+				password = scanner.next();
+				if (myDB.addUser(username, password.trim())) {
+					System.out.println("Creating account for  "+ username+ " password" + password+" was successful! " );
+				}
+				else
+				{
+					System.out.println(username+ " already exists!" );
+				}
+				
 				case "q":
 				case "exit":
 					run = false;
