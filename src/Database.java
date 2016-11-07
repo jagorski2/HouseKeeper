@@ -9,9 +9,6 @@ public class Database {
 	private MysqlDataSource dataSource;
 	private Connection conn;
 	private Statement stmt;
-	private String salt;
-	private String pw;
-
 	public Database(String username, String password, String server) {
 		dataSource = new MysqlDataSource();
 		dataSource.setUser(username);
@@ -29,8 +26,8 @@ public class Database {
 
 		resret.next();
 
-		this.salt = resret.getString("salt");
-		this.pw = resret.getString("pass");
+		resret.getString("salt");
+		resret.getString("pass");
 		resret.close();
 		stmt.close();
 		conn.close();
@@ -55,10 +52,30 @@ public class Database {
 			saltPW = Crypto.hashPW(pass);
 			String q = "INSERT INTO `users` (`userID`, `userName`, `pass`, `salt`) VALUES (NULL, '" + uname + "', '"
 					+ saltPW[1] + "', '" + saltPW[0] + "');";
-			System.out.println(q);
 			stmt.executeUpdate(q);
+			q = "CREATE TABLE `housekeeper`.`"+ uname.trim() + "_HOUSES` ( `myHouses` VARCHAR(100) NOT NULL ) ENGINE = InnoDB";
+			stmt.executeUpdate(q);
+			
 			returnValue = true;
 		}
+
+		stmt.close();
+		conn.close();
+		return returnValue;
+
+	}
+	
+	public boolean addHouse(String uname, String houseName) throws SQLException {
+		boolean returnValue;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		
+		
+		String q = "INSERT INTO `houses` (`houseID`, `houseName`, `houseOwner`) VALUES (NULL, '"+houseName.trim() + "_HOUSE', '"+uname+"');";
+			stmt.executeUpdate(q);
+	   q = "INSERT INTO `"+uname+"_houses` (`myHouses`) VALUES ('"+houseName+"')";
+	   stmt.executeUpdate(q);
+			returnValue = true;
 
 		stmt.close();
 		conn.close();
@@ -81,5 +98,7 @@ public class Database {
 		conn.close();
 		return ret;
 	}
+	
+	
 
 }

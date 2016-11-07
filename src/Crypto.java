@@ -11,9 +11,7 @@ public class Crypto {
 		String saltedpw;
 		String[] res = new String[2];
 		res[0] = getSalt();
-		//saltedpw = res[0] + pw;
 		saltedpw = res[0] + pw;
-		System.out.println("CREATED HASH WITH STRING:"+saltedpw);
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			digest.update(saltedpw.getBytes());
@@ -36,9 +34,7 @@ public class Crypto {
 	static boolean authUser (String pw, String salt, String encrypredpw)
 	{
 		boolean returnValue = false;
-		//String saltedpw = salt + pw;
 		String saltedpw = salt + pw;
-		System.out.println("LOGIN STRING TO BE HASED:"+saltedpw);
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			digest.update(saltedpw.getBytes());
@@ -48,14 +44,7 @@ public class Crypto {
 	           sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 	        }
 	        if (sb.toString().equals(encrypredpw)) {
-	        	System.out.println("Authed USER");
 	        	returnValue = true;
-	        }
-	        else
-	        {
-	        	System.out.println(sb.toString());
-	        	System.out.println(encrypredpw);
-	        	
 	        }
 			
 		} catch (NoSuchAlgorithmException e) {
