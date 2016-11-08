@@ -35,25 +35,64 @@ public class Database {
 
 	}
 
-	public String[] getHouses(String user) throws SQLException {
+	public String[] getMyHouses(String user) throws SQLException {
 		ResultSet resret;
 		String[] houses;
 		int count = 0;
 		conn = (Connection) dataSource.getConnection();
 		stmt = (Statement) conn.createStatement();
-		resret = stmt.executeQuery("SELECT count(*) AS count FROM `" + user + "_HOUSES");
+		resret = stmt.executeQuery("SELECT count(*) AS count FROM `housemembers` WHERE `member` LIKE '" + user + "'");
+		
 		resret.first();
 		houses = new String[Integer.parseInt(resret.getString("count"))];
-		resret = stmt.executeQuery("SELECT * FROM `" + user + "_HOUSES");
+		resret = stmt.executeQuery("SELECT `house` FROM `housemembers` WHERE `member` LIKE '" + user + "'");
 
 		while (resret.next()) {
-			houses[count++] = resret.getString("myHouses");
+			houses[count++] = resret.getString("house");
 		}
 
 		resret.close();
 		stmt.close();
 		conn.close();
 		return houses;
+
+	}
+	
+	public String[] getAllHouses() throws SQLException {
+		ResultSet resret;
+		String[] houses;
+		int count = 0;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		resret = stmt.executeQuery("SELECT count(houseID) AS count FROM `" + "houses");
+		resret.first();
+		houses = new String[Integer.parseInt(resret.getString("count"))];
+		resret = stmt.executeQuery("SELECT `houseName` FROM `houses`");
+
+		while (resret.next()) {
+			houses[count++] = resret.getString("houseName");
+		}
+
+		resret.close();
+		stmt.close();
+		conn.close();
+		return houses;
+
+	}
+	
+	public int getNumberOfAllChores(String selectedHouse) throws SQLException {
+		ResultSet resret;
+		int numOfChores = 0;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		resret = stmt.executeQuery("SELECT count(choreID) AS count FROM `chores` WHERE `house` like " + selectedHouse);
+		resret.first();
+		numOfChores = resret.getInt("count");
+
+		resret.close();
+		stmt.close();
+		conn.close();
+		return numOfChores;
 
 	}
 
@@ -73,10 +112,6 @@ public class Database {
 			String q = "INSERT INTO `users` (`userID`, `userName`, `pass`, `salt`) VALUES (NULL, '" + uname + "', '"
 					+ saltPW[1] + "', '" + saltPW[0] + "');";
 			stmt.executeUpdate(q);
-			q = "CREATE TABLE `housekeeper`.`" + uname.trim()
-					+ "_HOUSES` ( `myHouses` VARCHAR(100) NOT NULL ) ENGINE = InnoDB";
-			stmt.executeUpdate(q);
-
 			returnValue = true;
 		}
 
@@ -92,9 +127,25 @@ public class Database {
 		stmt = (Statement) conn.createStatement();
 
 		String q = "INSERT INTO `houses` (`houseID`, `houseName`, `houseOwner`) VALUES (NULL, '" + houseName.trim()
-				+ "_HOUSE', '" + uname + "');";
+				+ "', '" + uname + "');";
 		stmt.executeUpdate(q);
-		q = "INSERT INTO `" + uname + "_houses` (`myHouses`) VALUES ('" + houseName + "')";
+		q = "INSERT INTO `housemembers` (`member`, `house`) VALUES ('"+uname+"', '" + houseName.trim()
+		+ "');";
+		stmt.executeUpdate(q);
+		returnValue = true;
+
+		stmt.close();
+		conn.close();
+		return returnValue;
+
+	}
+	
+	public boolean joinHouse(String uname, String houseName) throws SQLException {
+		boolean returnValue;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+
+		String q = "INSERT INTO `" + uname + "_houses` (`myHouses`) VALUES ('" + houseName + "')";
 		stmt.executeUpdate(q);
 		returnValue = true;
 
@@ -119,6 +170,16 @@ public class Database {
 		stmt.close();
 		conn.close();
 		return ret;
+	}
+
+	public void addChore(Chore mychore) throws SQLException {
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+
+		String q = "INSERT INTO `chores` (`duration`, `complete`, `description`, `assignedUser`, `house`, `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`) VALUES ('0', '0', '"+mychore.getDescription()+"', '"+mychore.getAssignedUser()+"', '"+mychore.getHouse()+"', '"+mychore.isMonday()+"', '"+mychore.isTuesday()+"', '"+mychore.isWednesday()+"', '"+mychore.isThursday()+"', '"+mychore.isFriday()+"', '"+mychore.isSaturday()+"', '"+mychore.isSunday()+"')";
+		stmt.executeUpdate(q);
+		stmt.close();
+		conn.close();
 	}
 
 }

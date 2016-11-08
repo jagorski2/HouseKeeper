@@ -5,23 +5,19 @@ public class main {
 
 	public static void main(String[] args) {
 
-		Database myDB = new Database("jim", "housekeeper", "127.0.0.1");
+		Database myDB = new Database("", "", "maximumfps.com");
 
 		boolean run = true;
 		boolean notLoggedIn = true;
 		boolean houseSelected = false;
 		String selectedHouse = "";
-		int currentChore = 0;
 	    String loggedInUser = "";
 		Scanner scanner = new Scanner(System.in);
-		Chore[] mychore = new Chore[10];
+		Chore mychore = new Chore();
 		String username = "";
 		String password = "";
 		String input;
 
-		for (int cc = 0; cc < mychore.length; cc++) {
-			mychore[cc] = new Chore();
-		}
 		System.out.println("House Keeper");
 		while (run) {
 
@@ -86,7 +82,14 @@ public class main {
 				switch (input) {
 				case "1":
 					try {
-						houses = myDB.getHouses("123123");
+						houses = myDB.getMyHouses(loggedInUser);
+						myDB.getAllHouses();
+						if(houses.length == 0)
+						{
+							System.out.println("Not a member of any houses, create or join one");
+						}
+						else
+						{
 						for (int ii = 0; ii < houses.length; ii++)
 						{
 							System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
@@ -95,6 +98,7 @@ public class main {
 						selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
 						System.out.println("You selected house: " + selectedHouse);
 						houseSelected = true;
+						}
 						
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
@@ -111,7 +115,34 @@ public class main {
 						e.printStackTrace();
 					}
 					
-					
+					break;
+				case "3":
+					try {
+						
+						houses = myDB.getAllHouses();
+						
+						if (houses.length == 0)
+						{
+							System.out.println("No houses to join");
+						}
+						else
+						{
+							System.out.println("Available houses to join:");
+						for (int ii = 0; ii < houses.length; ii++)
+						{
+							System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
+						}
+						houseIndex = scanner.next();
+						selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
+						myDB.joinHouse(loggedInUser, selectedHouse);
+						System.out.println("You selected house: " + selectedHouse + " to join!");
+						houseSelected = true;
+						}
+						
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					break;
 				case "q":
 				case "exit":
@@ -124,22 +155,27 @@ public class main {
 				}
 			}
 
+			/* Adding and Viewing Chores */
 			System.out.println(Menu.MainMenu3);
 			input = scanner.next();
-
+			mychore.setHouse(selectedHouse);
 			switch (input) {
 			case "1":
 				for (int ii = 0; ii <= 8; ii++) {
 					System.out.println(Menu.addChore(ii));
-					mychore[currentChore].updateChore(ii, new Scanner(System.in).nextLine());
-					
+					mychore.updateChore(ii, new Scanner(System.in).nextLine());
 
 				}
-				currentChore++;
+				try {
+					myDB.addChore(mychore);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 
 			case "2":
-				Chore.printChores(mychore);
+
 				break;
 			case "q":
 			case "exit":

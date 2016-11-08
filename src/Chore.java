@@ -5,81 +5,90 @@ public class Chore {
     private boolean complete;
     private String description;
     private String assignedUser;
-    private boolean Monday;
-    private boolean Tuesday;
-    private boolean Wednesday;
-    private boolean Thursday;
-    private boolean Friday;
-    private boolean Saturday;
-	private boolean Sunday;
+    private String house;
+	private int Monday;
+    private int Tuesday;
+    private int Wednesday;
+    private int Thursday;
+    private int Friday;
+    private int Saturday;
+	private int Sunday;
     
     public Chore () {
-    	this.Monday = false;
-    	this.Tuesday = false;
-    	this.Wednesday = false;
-    	this.Thursday = false;
-    	this.Friday = false;
-    	this.Saturday = false;
-    	this.Sunday = false;
+    	this.Monday = 0;
+    	this.Tuesday = 0;
+    	this.Wednesday = 0;
+    	this.Thursday = 0;
+    	this.Friday = 0;
+    	this.Saturday = 0;
+    	this.Sunday = 0;
     	this.assignedUser = null;
     	this.description = null;
     	this.duration = 0;
     	this.complete = false;
     }
     
-    public boolean isMonday() {
+    public String getHouse() {
+		return house;
+	}
+
+	public void setHouse(String house) {
+		this.house = house;
+	}
+    
+    public int isMonday() {
 		return Monday;
 	}
 
-	public void setMonday(boolean monday) {
+	public void setMonday(int monday) {
 		Monday = monday;
 	}
 
-	public boolean isTuesday() {
+	public int isTuesday() {
 		return Tuesday;
 	}
 
-	public void setTuesday(boolean tuesday) {
+	public void setTuesday(int tuesday) {
 		Tuesday = tuesday;
 	}
 
-	public boolean isWednesday() {
+	public int isWednesday() {
 		return Wednesday;
 	}
 
-	public void setWednesday(boolean wednesday) {
+	public void setWednesday(int wednesday) {
 		Wednesday = wednesday;
 	}
 
-	public boolean isThursday() {
+	public int isThursday() {
 		return Thursday;
 	}
 
-	public void setThursday(boolean thursday) {
+	public void setThursday(int thursday) {
 		Thursday = thursday;
 	}
 
-	public boolean isFriday() {
+	public int isFriday() {
 		return Friday;
 	}
 
-	public void setFriday(boolean friday) {
+	public void setFriday(int friday) {
 		Friday = friday;
 	}
 
-	public boolean isSaturday() {
+	public int isSaturday() {
 		return Saturday;
 	}
 
-	public void setSaturday(boolean saturday) {
+	public void setSaturday(int saturday) {
 		Saturday = saturday;
 	}
 
-	public boolean isSunday() {
+	public int isSunday() {
 		return Sunday;
 	}
 
-	public void setSunday(boolean sunday) {
+	public void setSunday(int sunday) {
 		Sunday = sunday;
 	}
     
@@ -120,43 +129,43 @@ public class Chore {
 			case 2:
 				if (arg.equals("y"))
 				{
-					this.Monday = true;
+					this.Monday = 1;
 				}
 				break;
 			case 3:
 				if (arg.equals("y"))
 				{
-					this.Tuesday = true;
+					this.Tuesday = 1;
 				}
 				break;
 			case 4:
 				if (arg.equals("y"))
 				{
-					this.Wednesday = true;
+					this.Wednesday = 1;
 				}
 				break;
 			case 5:
 				if (arg.equals("y"))
 				{
-					this.Thursday = true;
+					this.Thursday = 1;
 				}
 				break;
 			case 6:
 				if (arg.equals("y"))
 				{
-					this.Friday = true;
+					this.Friday = 1;
 				}
 				break;
 			case 7:
 				if (arg.equals("y"))
 				{
-					this.Saturday = true;
+					this.Saturday = 1;
 				}
 				break;
 			case 8:
 				if (arg.equals("y"))
 				{
-					this.Sunday = true;
+					this.Sunday = 1;
 				}
 				break;
 				
@@ -165,25 +174,25 @@ public class Chore {
 	}
 	public String getDaysOfWeek() {
 		String ret = null;
-		if (this.Monday) {
+		if (this.Monday == 1) {
 			ret = "Monday ";
 		}
-		if (this.Tuesday) {
+		if (this.Tuesday == 1) {
 			ret = ret + "Tuesday ";
 		}
-		if (this.Wednesday) {
+		if (this.Wednesday == 1) {
 			ret = ret + "Wednesday ";
 		}
-		if (this.Thursday) {
+		if (this.Thursday == 1) {
 			ret = ret + "Thursday ";
 		}
-		if (this.Friday) {
+		if (this.Friday == 1) {
 			ret = ret + "Friday ";
 		}
-		if (this.Saturday) {
+		if (this.Saturday == 1) {
 			ret = ret + "Saturday ";
 		}
-		if (this.Sunday) {
+		if (this.Sunday == 1) {
 			ret = ret + "Sunday";
 		}
 		
