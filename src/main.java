@@ -1,4 +1,8 @@
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 public class main {
@@ -16,8 +20,13 @@ public class main {
 		String username = "";
 		String password = "";
 		String input;
+		String today = Util.getDayOfWeek();
 
-		System.out.println("House Keeper");
+
+		
+
+
+		System.out.println("House Keeper, today is " + today);
 		while (run) {
 			
 			switch (menuLevel) {
@@ -91,9 +100,15 @@ public class main {
 								System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
 							}
 							houseIndex = scanner.next();
+							if (Integer.parseInt(houseIndex) > 0 && Integer.parseInt(houseIndex) <= houses.length) {
 							selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
 							System.out.println("You selected house: " + selectedHouse);
 							menuLevel = 3;
+							}
+							else
+							{
+								System.out.println("Invalid Option");
+							}
 							
 						}
 
@@ -126,10 +141,17 @@ public class main {
 								System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
 							}
 							houseIndex = scanner.next();
-							selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
-							myDB.joinHouse(loggedInUser, selectedHouse);
-							System.out.println("You selected house: " + selectedHouse + " to join!");
-							menuLevel = 3;
+							if (Integer.parseInt(houseIndex) > 0 && Integer.parseInt(houseIndex) <= houses.length) {
+								selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
+								myDB.joinHouse(loggedInUser, selectedHouse);
+								System.out.println("You selected house: " + selectedHouse + " to join!");
+								menuLevel = 3;
+							}
+							else
+							{
+								System.out.println("Invalid Option");
+							}
+
 						}
 
 					} catch (SQLException e1) {
@@ -191,15 +213,23 @@ public class main {
 					}
 					break;
 				case "4":
+					try {
+						Chore.printChores(myDB.getMyChoresForToday(selectedHouse, loggedInUser, today));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case "5":
 					selectedHouse = "";
 					menuLevel = 2;
 					break;
-				case "5":
+				case "6":
 					selectedHouse = "";
 					loggedInUser = "";
 					menuLevel = 1;
 					break;
-				case "6":
+				case "7":
 				case "q":
 				case "exit":
 					run = false;

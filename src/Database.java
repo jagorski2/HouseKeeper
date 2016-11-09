@@ -112,6 +112,23 @@ public class Database {
 
 	}
 	
+	public int getNumberOfMyChoresForToday(String selectedHouse, String userName, String today) throws SQLException {
+		ResultSet resret;
+		int numOfChores = 0;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		resret = stmt.executeQuery("SELECT count(choreID) AS count FROM `chores` WHERE house like '" + selectedHouse+"' AND assignedUser='"+userName+"' AND "+today+"=1");
+		resret.first();
+		numOfChores = resret.getInt("count");
+
+		resret.close();
+		stmt.close();
+		conn.close();
+		return numOfChores;
+
+	}
+	
+	
 	public Chore[] getAllChores(String selectedHouse) throws SQLException {
 		ResultSet resret;
 		int numChores = getNumberOfAllChores(selectedHouse);
@@ -268,6 +285,41 @@ public class Database {
 		stmt.executeUpdate(q);
 		stmt.close();
 		conn.close();
+	}
+
+	public Chore[] getMyChoresForToday(String selectedHouse, String loggedInUser, String today) throws SQLException {
+		ResultSet resret;
+		int numChores = getNumberOfMyChoresForToday(selectedHouse, loggedInUser, today);
+		int currentChore = 0;
+		Chore[] chores = new Chore[numChores];
+		for (int i = 0; i < numChores; i++)
+		{
+			chores[i] = new Chore();
+		}
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		resret = stmt.executeQuery("SELECT *  FROM `chores` WHERE house='" + selectedHouse+"' AND assignedUser='"+loggedInUser+"' AND "+today+"=1");
+		
+		while (resret.next()) {
+			chores[currentChore].setDuration(resret.getInt("duration"));
+			chores[currentChore].setComplete(resret.getInt("complete"));
+			chores[currentChore].setDescription(resret.getString("description"));
+			chores[currentChore].setAssignedUser(resret.getString("assignedUser"));
+			chores[currentChore].setHouse(resret.getString("house"));
+			chores[currentChore].setMonday(resret.getInt("monday"));
+			chores[currentChore].setTuesday(resret.getInt("tuesday"));
+			chores[currentChore].setWednesday(resret.getInt("wednesday"));
+			chores[currentChore].setThursday(resret.getInt("thursday"));
+			chores[currentChore].setFriday(resret.getInt("friday"));
+			chores[currentChore].setSaturday(resret.getInt("saturday"));
+			chores[currentChore].setSunday(resret.getInt("sunday"));
+			currentChore++;
+		}
+
+		resret.close();
+		stmt.close();
+		conn.close();
+		return chores;
 	}
 
 }
