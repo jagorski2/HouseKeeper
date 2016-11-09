@@ -72,6 +72,7 @@ public class main {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					break;
 
 				case "q":
 				case "exit":
@@ -131,7 +132,7 @@ public class main {
 				case "3":
 					try {
 
-						houses = myDB.getAllHouses();
+						houses = myDB.getAllJoinableHouses(loggedInUser);
 
 						if (houses.length == 0) {
 							System.out.println("No houses to join");

@@ -80,6 +80,28 @@ public class Database {
 
 	}
 	
+	public String[] getAllJoinableHouses(String username) throws SQLException {
+		ResultSet resret;
+		String[] houses;
+		int count = 0;
+		conn = (Connection) dataSource.getConnection();
+		stmt = (Statement) conn.createStatement();
+		resret = stmt.executeQuery("SELECT count(houses.houseID) AS count FROM houses INNER JOIN housemembers ON houses.houseID=housemembers.houseID WHERE housemembers.member<>'"+username+"'");
+		resret.first();
+		houses = new String[Integer.parseInt(resret.getString("count"))];
+		resret = stmt.executeQuery("SELECT `houseName` FROM `houses` INNER JOIN housemembers ON houses.houseID=housemembers.houseID WHERE housemembers.member<>'"+username+"'");
+
+		while (resret.next()) {
+			houses[count++] = resret.getString("houseName");
+		}
+
+		resret.close();
+		stmt.close();
+		conn.close();
+		return houses;
+
+	}
+	
 	public int getNumberOfAllChores(String selectedHouse) throws SQLException {
 		ResultSet resret;
 		int numOfChores = 0;
@@ -228,14 +250,17 @@ public class Database {
 
 	public boolean addHouse(String uname, String houseName) throws SQLException {
 		boolean returnValue;
+		ResultSet resret;
 		conn = (Connection) dataSource.getConnection();
 		stmt = (Statement) conn.createStatement();
 
 		String q = "INSERT INTO `houses` (`houseID`, `houseName`, `houseOwner`) VALUES (NULL, '" + houseName.trim()
 				+ "', '" + uname + "');";
 		stmt.executeUpdate(q);
-		q = "INSERT INTO `housemembers` (`member`, `house`) VALUES ('"+uname+"', '" + houseName.trim()
-		+ "');";
+		q = "SELECT `houseID` FROM houses WHERE houseName='"+houseName.trim()+"'";
+		resret = stmt.executeQuery(q);
+		resret.first();
+		q = "INSERT INTO `housemembers` (`member`, `house`, `houseID`) VALUES ('"+uname+"', '" + houseName.trim()+ "' , '"+resret.getString("houseID")+"');";
 		stmt.executeUpdate(q);
 		returnValue = true;
 
@@ -247,12 +272,26 @@ public class Database {
 	
 	public boolean joinHouse(String uname, String houseName) throws SQLException {
 		boolean returnValue;
+		ResultSet resret;
 		conn = (Connection) dataSource.getConnection();
 		stmt = (Statement) conn.createStatement();
 
-		String q = "INSERT INTO `housemembers` (`member`,`house`) VALUES ('"+uname+"','"+houseName +"')";
+		
+		String q =  " SELECT * from `housemembers` WHERE member='"+uname+"' AND house='"+houseName+"'";
+		resret = stmt.executeQuery(q);
+		if (resret.first() == false)
+		{
+			resret = stmt.executeQuery("SELECT `houseID` FROM houses WHERE houseName='"+houseName.trim()+"'");
+			resret.first();
+		q = "INSERT INTO `housemembers` (`member`,`house`,`houseID`) VALUES ('"+uname+"','"+houseName +"' , '"+ resret.getString("houseID")+"')";
 		stmt.executeUpdate(q);
 		returnValue = true;
+		}
+		else
+		{
+			System.out.println("Already a member of that house");
+			returnValue = false;
+		}
 
 		stmt.close();
 		conn.close();
