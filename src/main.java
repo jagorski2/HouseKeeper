@@ -8,10 +8,9 @@ public class main {
 		Database myDB = new Database("andy", "andypassword123", "maximumfps.com");
 
 		boolean run = true;
-		boolean notLoggedIn = true;
-		boolean houseSelected = false;
+		int menuLevel = 1;
 		String selectedHouse = "";
-	    String loggedInUser = "";
+		String loggedInUser = "";
 		Scanner scanner = new Scanner(System.in);
 		Chore mychore = new Chore();
 		String username = "";
@@ -20,9 +19,10 @@ public class main {
 
 		System.out.println("House Keeper");
 		while (run) {
-
-			/* User Creation / Login Menu */
-			while (notLoggedIn) {
+			
+			switch (menuLevel) {
+			case 1:
+				/* User Creation / Login Menu */
 				System.out.println(Menu.MainMenu);
 				input = scanner.next();
 				switch (input) {
@@ -36,8 +36,9 @@ public class main {
 						if (Crypto.authUser(password.trim(), myDB.getPassAndSalt(username)[0],
 								myDB.getPassAndSalt(username)[1])) {
 							System.out.println("Logged in as User:" + username);
-							loggedInUser =  username;
-							notLoggedIn = false;
+							loggedInUser = username;
+							menuLevel = 2;
+
 						} else {
 							System.out.println("Invalid username/password");
 						}
@@ -69,10 +70,9 @@ public class main {
 					break;
 
 				}
-			}
-
-			/* House viewing and creation */
-			while (houseSelected == false) {
+				break;
+				
+			case 2:
 				System.out.println(Menu.MainMenu2);
 				String houseName = "";
 				String houseIndex = "";
@@ -84,22 +84,19 @@ public class main {
 					try {
 						houses = myDB.getMyHouses(loggedInUser);
 						myDB.getAllHouses();
-						if(houses.length == 0)
-						{
+						if (houses.length == 0) {
 							System.out.println("Not a member of any houses, create or join one");
+						} else {
+							for (int ii = 0; ii < houses.length; ii++) {
+								System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
+							}
+							houseIndex = scanner.next();
+							selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
+							System.out.println("You selected house: " + selectedHouse);
+							menuLevel = 3;
+							
 						}
-						else
-						{
-						for (int ii = 0; ii < houses.length; ii++)
-						{
-							System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
-						}
-						houseIndex = scanner.next();
-						selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
-						System.out.println("You selected house: " + selectedHouse);
-						houseSelected = true;
-						}
-						
+
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -114,36 +111,37 @@ public class main {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					break;
 				case "3":
 					try {
-						
+
 						houses = myDB.getAllHouses();
-						
-						if (houses.length == 0)
-						{
+
+						if (houses.length == 0) {
 							System.out.println("No houses to join");
-						}
-						else
-						{
+						} else {
 							System.out.println("Available houses to join:");
-						for (int ii = 0; ii < houses.length; ii++)
-						{
-							System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
+							for (int ii = 0; ii < houses.length; ii++) {
+								System.out.println(Integer.toString(ii + 1) + ". " + houses[ii]);
+							}
+							houseIndex = scanner.next();
+							selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
+							myDB.joinHouse(loggedInUser, selectedHouse);
+							System.out.println("You selected house: " + selectedHouse + " to join!");
+							menuLevel = 3;
 						}
-						houseIndex = scanner.next();
-						selectedHouse = houses[Integer.parseInt(houseIndex) - 1];
-						myDB.joinHouse(loggedInUser, selectedHouse);
-						System.out.println("You selected house: " + selectedHouse + " to join!");
-						houseSelected = true;
-						}
-						
+
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					break;
+				case "4":
+					loggedInUser = "";
+					menuLevel = 1;
+					break;
+				case "5":
 				case "q":
 				case "exit":
 					run = false;
@@ -153,51 +151,65 @@ public class main {
 					break;
 
 				}
-			}
+				
+				break;
+			case 3:
 
-			/* Adding and Viewing Chores */
-			System.out.println(Menu.MainMenu3);
-			input = scanner.next();
-			mychore.setHouse(selectedHouse);
-			switch (input) {
-			case "1":
-				for (int ii = 0; ii <= 8; ii++) {
-					System.out.println(Menu.addChore(ii));
-					mychore.updateChore(ii, new Scanner(System.in).nextLine());
+				/* Adding and Viewing Chores */
+				System.out.println(Menu.MainMenu3);
+				input = scanner.next();
+				mychore.setHouse(selectedHouse);
+				switch (input) {
+				case "1":
+					for (int ii = 0; ii <= 8; ii++) {
+						System.out.println(Menu.addChore(ii));
+						mychore.updateChore(ii, new Scanner(System.in).nextLine());
+
+					}
+					try {
+						myDB.addChore(mychore);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+
+				case "2":
+					try {
+						Chore.printChores(myDB.getAllChores(selectedHouse));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case "3":
+					try {
+						Chore.printChores(myDB.getMyChores(selectedHouse, loggedInUser));
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case "4":
+					selectedHouse = "";
+					menuLevel = 2;
+					break;
+				case "5":
+					selectedHouse = "";
+					loggedInUser = "";
+					menuLevel = 1;
+					break;
+				case "6":
+				case "q":
+				case "exit":
+					run = false;
+					break;
+				default:
+					System.out.println("Invalid Option");
+					break;
 
 				}
-				try {
-					myDB.addChore(mychore);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				break;
-
-			case "2":
-				try {
-					Chore.printChores(myDB.getAllChores(selectedHouse));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			case "3":
-				try {
-					Chore.printChores(myDB.getMyChores(selectedHouse, loggedInUser));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			case "q":
-			case "exit":
-				run = false;
-				break;
-			default:
-				System.out.println("Invalid Option");
-				break;
-
 			}
 
 		}

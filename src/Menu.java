@@ -1,8 +1,8 @@
 
 public class Menu {
 	static String MainMenu = "Enter an option below\n 1. Login\n 2. Create Account";
-	static String MainMenu2 = "Enter an opton below\n 1. Select House\n 2. Create House\n 3. Join House";
-	static String MainMenu3 = "Enter an option below\n 1: Add Chore\n 2: View All Chores\n 3. View My Chores";
+	static String MainMenu2 = "Enter an opton below\n 1. Select House\n 2. Create House\n 3. Join House\n 4. Logout\n 5. Exit";
+	static String MainMenu3 = "Enter an option below\n 1: Add Chore\n 2: View All Chores\n 3. View My Chores\n 4. Selected different house\n 5. Logout\n 6. Exit";
 	
 	static String addChore(int line)
 	{
