@@ -5,7 +5,7 @@ public class main {
 
 	public static void main(String[] args) {
 
-		Database myDB = new Database("", "", "maximumfps.com");
+		Database myDB = new Database("andy", "andypassword123", "maximumfps.com");
 
 		boolean run = true;
 		boolean notLoggedIn = true;
@@ -175,7 +175,20 @@ public class main {
 				break;
 
 			case "2":
-
+				try {
+					Chore.printChores(myDB.getAllChores(selectedHouse));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			case "3":
+				try {
+					Chore.printChores(myDB.getMyChores(selectedHouse, loggedInUser));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			case "q":
 			case "exit":

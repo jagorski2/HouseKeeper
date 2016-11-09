@@ -2,7 +2,7 @@
 public class Chore {
 
     private int duration;
-    private boolean complete;
+    private int complete;
     private String description;
     private String assignedUser;
     private String house;
@@ -25,7 +25,7 @@ public class Chore {
     	this.assignedUser = null;
     	this.description = null;
     	this.duration = 0;
-    	this.complete = false;
+    	this.complete = 0;
     }
     
     public String getHouse() {
@@ -98,10 +98,10 @@ public class Chore {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
-	public boolean isComplete() {
+	public int isComplete() {
 		return complete;
 	}
-	public void setComplete(boolean complete) {
+	public void setComplete(int complete) {
 		this.complete = complete;
 	}
 	public String getDescription() {
@@ -172,37 +172,66 @@ public class Chore {
 		}
 		
 	}
-	public String getDaysOfWeek() {
+	public static String formatDaysOfWeek(Chore chore) {
 		String ret = null;
-		if (this.Monday == 1) {
-			ret = "Monday ";
+		if (chore.isMonday() == 1) {
+			ret = "| X ";
 		}
-		if (this.Tuesday == 1) {
-			ret = ret + "Tuesday ";
+		else
+		{
+			ret = "|   ";
 		}
-		if (this.Wednesday == 1) {
-			ret = ret + "Wednesday ";
+		if (chore.isTuesday() == 1) {
+			ret = ret + "| X ";
 		}
-		if (this.Thursday == 1) {
-			ret = ret + "Thursday ";
+		else
+		{
+			ret = ret + "|   ";
 		}
-		if (this.Friday == 1) {
-			ret = ret + "Friday ";
+		if (chore.isWednesday() == 1) {
+			ret = ret + "| X ";
 		}
-		if (this.Saturday == 1) {
-			ret = ret + "Saturday ";
+		else
+		{
+			ret = ret + "|   ";
 		}
-		if (this.Sunday == 1) {
-			ret = ret + "Sunday";
+		if (chore.isThursday() == 1) {
+			ret = ret + "| X ";
+		}
+		else
+		{
+			ret = ret + "|   ";
+		}
+		if (chore.isFriday() == 1) {
+			ret = ret + "| X ";
+		}
+		else
+		{
+			ret = ret + "|   ";
+		}
+		if (chore.isSaturday() == 1) {
+			ret = ret + "| X ";
+		}
+		else
+		{
+			ret = ret + "|   ";
+		}
+		if (chore.isSunday() == 1) {
+			ret = ret + "| X |";
+		}
+		else
+		{
+			ret = ret + "|   |";
 		}
 		
 		return ret;
 	}
 	public static String printChores(Chore[] me){
 		System.out.println("|No |     Description     |     Assigned To     | M | T | W | Th| F | Sa| Su|");
+		System.out.println("_____________________________________________________________________________");
 		for (int cc = 0; cc < me.length; cc++)
 		{
-			System.out.println(formatNo(cc) + formatDesc("asd"));
+			System.out.println(formatNo(cc) + formatDesc(me[cc].getDescription()) + formatUser(me[cc].getAssignedUser()) + formatDaysOfWeek(me[cc]));
 		}
 		return "";
 		
@@ -216,8 +245,20 @@ public class Chore {
 			ret = ret + " ";
 		}
 		
-		return ret + "|";
+		return ret;
 	}
+	
+	private static String formatUser(String de){
+		String ret = "|                     ";
+		ret = "| " + de;
+		for (int ii = ret.length(); ii < 22; ii++)
+		{
+			ret = ret + " ";
+		}
+		
+		return ret;
+	}
+	
 	private static String formatNo(int no){
 		String ret = "|";
 		if (no < 9)
